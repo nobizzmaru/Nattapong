@@ -1,0 +1,288 @@
+#include <stdio.h>
+#include <math.h>
+
+main ()
+{
+  			// Declare variable 'n'
+  int i = 0;
+//  int h;
+  char lvname[20];
+  char flagname[20];
+  char flagid[20];
+  int countflag;
+
+  int scriptnumber;
+  char yourname[30];
+  char createdate[15];
+  char appname[50];
+  char appid[50];
+  int workid;
+  int p,q;
+  int menunumber;
+  
+  printf("1.SponsorLevels 2.SponsorFlags\n");
+  printf("Enter Number to do : \n");
+  
+  scanf ("%d", &menunumber);
+  
+  printf ("Enter ScriptNumber :");
+  scanf ("%d", &scriptnumber);
+  printf ("Enter YourName :");
+  scanf ("%s", &yourname);
+  printf ("Enter Date(YYYY-MM-DD) :");
+  scanf ("%s", &createdate);
+  printf ("Enter AppName :");
+  scanf ("%s", &appname);
+  printf ("Enter WorkItemId :");
+  scanf ("%d", &workid);
+  printf ("Enter AppId :");
+  scanf ("%s", &appid);
+  printf ("***************COPY***************\n\n\n");
+  printf ("SET @number = %d;\n", scriptnumber);
+  printf ("SET @createby = N'%s';\n", yourname);
+  printf ("SET @createdate = '%s';\n", createdate);
+  printf ("SET @comment = N'Insert SponsorLevels For %s';\n", appname);
+  printf ("SET @workitemid = N'%d'; --work item id\n\n\n", workid);
+  printf ("***************COPY***************\n\n\n");
+
+ // printf ("Enter LevelName :");
+ // scanf ("%s", &lvname);
+ // printf ("Enter Number of Level :");
+ // scanf ("%d", &i);
+
+if (menunumber == 1)
+{
+     printf ("Enter LevelName :");
+  scanf ("%s", &lvname);
+  printf ("Enter Number of Level :");
+  scanf ("%d", &i);
+    
+    
+    
+     printf ("****************************************************************************************");
+     printf ("Click File CopyMe_SponsorLevels.txt(below Run Button) to see text for copy to SQL Script");
+     printf ("****************************************************************************************");
+  
+  FILE *fp;
+
+  fp = fopen ("CopyMe_SponsorLevels.txt", "w");
+  fputs ("DECLARE @number int;\n", fp);
+  fputs ("DECLARE @createby nvarchar(200);\n", fp);
+  fputs ("DECLARE @createdate datetime;\n", fp);
+  fputs ("DECLARE @comment nvarchar(200);\n", fp);
+  fputs ("DECLARE @script nvarchar(max);\n", fp);
+  fputs ("DECLARE @workitemid nvarchar(50);\n\n", fp);
+  fprintf (fp, "SET @number = %d; \n", scriptnumber);
+  fprintf (fp, "SET @createby = N'%s';\n", yourname);
+  fprintf (fp, "SET @createdate = '%s';\n", createdate);
+  fprintf (fp, "SET @comment = N'Insert SponsorLevels For %s';\n", appname);
+  fprintf (fp, "SET @workitemid = N'%d'; --work item id';\n\n", workid);
+  fputs ("-- script number must not exist and script number - 1 must exist\n",
+	 fp);
+  fputs ("IF EXISTS (SELECT * FROM [ScriptData] WHERE [Number] = @number) \n",
+	 fp);
+  fputs ("BEGIN\n", fp);
+  fputs ("	SELECT 'SCRIPT DATA SKIPPED' AS [Result]\n", fp);
+  fputs ("	RETURN;\n", fp);
+  fputs ("END\n\n", fp);
+  fputs ("BEGIN TRY\n\n", fp);
+  fputs ("set @script = N'\n\n", fp);
+  fputs
+    ("-- SQL COMMAND \n--1. replace single quote with TWO single quotes!\n--2. remove GO\n\n",
+     fp);
+  fputs
+    ("declare @environment as nvarchar(3);\nset @environment = N''DEV'';\n\n",
+     fp);
+  fputs
+    ("declare @scriptrelate as int;\nset @scriptrelate = null; -- ** if null will not require script from Table Scripts **\n\n",
+     fp);
+  fputs ("-- ** Variables BEGIN **\n\n", fp);
+  fputs ("Declare @AppId as nvarchar(50);\n\n", fp);
+  fputs ("-- ** Variables END **\n\n", fp);
+  fputs
+    ("--IF @scriptrelate IS NOT NULL AND NOT EXISTS (SELECT * FROM [Scripts] WHERE [Number] = @scriptrelate)\n",
+     fp);
+  fputs ("--BEGIN\n--	SELECT ''SCRIPT RELATE REQUIRED'' AS [Result]\n", fp);
+  fputs ("--	RETURN;\n--END\n\n", fp);
+  fputs
+    ("IF @environment = N''DEV''\n	BEGIN\n		-- ************** DEV BEGIN **************\n\n",
+     fp);
+  fprintf (fp, "SET @AppId = N''%s'';\n\n", appid);
+  fputs ("		-- ************** DEV END ****************\n", fp);
+  fputs
+    ("SELECT N''DEV'' AS [Result]\n	END\nELSE IF @environment = N''STG''\n",
+     fp);
+  fputs
+    ("	BEGIN\n		-- ************** STG BEGIN **************\n\n", fp);
+  fprintf (fp, "SET @AppId = N''%s'';\n\n", appid);
+  fputs ("		-- ************** STG END ****************\n", fp);
+  fputs
+    ("SELECT N''STG'' AS [Result]\n	END\nELSE IF @environment = N''PRD''\n",
+     fp);
+  fputs
+    ("	BEGIN\n		-- ************** PRD BEGIN **************\n\n", fp);
+  fprintf (fp, "SET @AppId = N''%s'';\n\n", appid);
+  fputs
+    ("		-- ************** PRD END ****************\n		SELECT N''PRD'' AS [Result]\n",
+     fp);
+  fputs ("	END\n", fp);
+  fputs ("ELSE\n", fp);
+  fputs ("	BEGIN\n", fp);
+  fputs ("		SELECT N''ENVIRONMENT ERROR!!'' AS [Result]\n", fp);
+  fputs ("	END\n\n\n\n", fp);
+  fputs ("-- ** SQL COMMAND BEGIN **\n\n", fp);
+  fputs ("BEGIN\n\n\n", fp);
+   int n = 0;
+  for (n = 0; n < i; n++)
+    {
+     p=pow (2, n);
+      // printf ("INSERT INTO [dbo].[SponsorLevels] ([LevelId],[SponsorId],[LevelName]) VALUES (%d,@agencyid,''%s%d'')\n", p, lvname, n + 1);
+      fprintf (fp,
+	       "INSERT INTO [dbo].[SponsorLevels] ([LevelId],[SponsorId],[LevelName]) VALUES (%d,@AppId,''%s%d'')\n", p, lvname, n+1);
+    }
+
+  fputs("\n END\n\n", fp);
+  fputs("-- ** SQL COMMAND END **\n\n';\n\nEXEC (@script);\n\nEND TRY\nBEGIN CATCH\n", fp);
+  fputs ("	--DEW 20181001 In case script error, print error and do not insert into script table\n", fp);
+  fputs ("SELECT 'SCRIPT DATA ERROR!! ERROR : ' + ERROR_MESSAGE() AS [Result]\n", fp);
+  fputs ("	RETURN;\n", fp);
+  fputs ("END CATCH;\n\n", fp);
+  fputs ("INSERT INTO [ScriptData] ([Number], [CreateBy], [CreateDate], [Comment], [RunDate], [Script], [WorkItemId]) VALUES (@number, @createby, @createdate, @comment, dbo.ToLocalTime(GETDATE()), @script, @workitemid);\n", fp);
+  fputs ("--DEW 20181001 In case script run successfully, print success message\n", fp);
+  fputs ("SELECT 'SCRIPT DATA COMPLETED SUCCESSFULLY' AS [Result]\n", fp);
+  fputs ("GO\n", fp);
+
+
+  fclose (fp);
+}
+
+if (menunumber == 2)
+{
+    
+       printf ("Enter FlagName(Ex.KTD) :");
+  scanf ("%s", &flagname);
+  printf ("Enter FlagId(ktd) :");
+  scanf ("%s", &flagid);
+  
+  printf("Enter Number Of FlagStart : \n");
+  printf("If you want to Insert Flag 101-120\n");
+  printf("You Insert 101\n");
+  scanf ("%d", &countflag);
+    
+  printf ("Enter Number of FlagEnd :");
+  scanf ("%d", &i);
+    
+    
+    
+     printf ("****************************************************************************************");
+     printf ("Click File CopyMe_SponsorFlags.txt(below Run Button) to see text for copy to SQL Script");
+     printf ("****************************************************************************************");
+  
+  FILE *fp;
+
+  fp = fopen ("CopyMe_SponsorFlags.txt", "w");
+  fputs ("DECLARE @number int;\n", fp);
+  fputs ("DECLARE @createby nvarchar(200);\n", fp);
+  fputs ("DECLARE @createdate datetime;\n", fp);
+  fputs ("DECLARE @comment nvarchar(200);\n", fp);
+  fputs ("DECLARE @script nvarchar(max);\n", fp);
+  fputs ("DECLARE @workitemid nvarchar(50);\n\n", fp);
+  fprintf (fp, "SET @number = %d; \n", scriptnumber);
+  fprintf (fp, "SET @createby = N'%s';\n", yourname);
+  fprintf (fp, "SET @createdate = '%s';\n", createdate);
+  fprintf (fp, "SET @comment = N'Insert SponsorFlags For %s';\n", appname);
+  fprintf (fp, "SET @workitemid = N'%d'; --work item id';\n\n", workid);
+  fputs ("-- script number must not exist and script number - 1 must exist\n",
+	 fp);
+  fputs ("IF EXISTS (SELECT * FROM [ScriptData] WHERE [Number] = @number) \n",
+	 fp);
+  fputs ("BEGIN\n", fp);
+  fputs ("	SELECT 'SCRIPT DATA SKIPPED' AS [Result]\n", fp);
+  fputs ("	RETURN;\n", fp);
+  fputs ("END\n\n", fp);
+  fputs ("BEGIN TRY\n\n", fp);
+  fputs ("set @script = N'\n\n", fp);
+  fputs
+    ("-- SQL COMMAND \n--1. replace single quote with TWO single quotes!\n--2. remove GO\n\n",
+     fp);
+  fputs
+    ("declare @environment as nvarchar(3);\nset @environment = N''DEV'';\n\n",
+     fp);
+  fputs
+    ("declare @scriptrelate as int;\nset @scriptrelate = null; -- ** if null will not require script from Table Scripts **\n\n",
+     fp);
+  fputs ("-- ** Variables BEGIN **\n\n", fp);
+  fputs ("Declare @SponsorId as int;\n\n", fp);
+  fputs ("-- ** Variables END **\n\n", fp);
+  fputs
+    ("--IF @scriptrelate IS NOT NULL AND NOT EXISTS (SELECT * FROM [Scripts] WHERE [Number] = @scriptrelate)\n",
+     fp);
+  fputs ("--BEGIN\n--	SELECT ''SCRIPT RELATE REQUIRED'' AS [Result]\n", fp);
+  fputs ("--	RETURN;\n--END\n\n", fp);
+  fputs
+    ("IF @environment = N''DEV''\n	BEGIN\n		-- ************** DEV BEGIN **************\n\n\n",
+     fp);
+ // fprintf (fp, "SET @AppId = N''%s'';\n\n", appid);
+  fputs ("		-- ************** DEV END ****************\n", fp);
+  fputs
+    ("SELECT N''DEV'' AS [Result]\n	END\nELSE IF @environment = N''STG''\n",
+     fp);
+  fputs
+    ("	BEGIN\n		-- ************** STG BEGIN **************\n\n\n", fp);
+ // fprintf (fp, "SET @AppId = N''%s'';\n\n", appid);
+  fputs ("		-- ************** STG END ****************\n", fp);
+  fputs
+    ("SELECT N''STG'' AS [Result]\n	END\nELSE IF @environment = N''PRD''\n",
+     fp);
+  fputs
+    ("	BEGIN\n		-- ************** PRD BEGIN **************\n\n\n", fp);
+  //fprintf (fp, "SET @AppId = N''%s'';\n\n", appid);
+  fputs
+    ("		-- ************** PRD END ****************\n		SELECT N''PRD'' AS [Result]\n",
+     fp);
+  fputs ("	END\n", fp);
+  fputs ("ELSE\n", fp);
+  fputs ("	BEGIN\n", fp);
+  fputs ("		SELECT N''ENVIRONMENT ERROR!!'' AS [Result]\n", fp);
+  fputs ("	END\n\n\n\n", fp);
+  fputs ("-- ** SQL COMMAND BEGIN **\n\n", fp);
+  fputs ("declare @agencyid as int; \n\n", fp);
+  
+   fprintf (fp, "SET @agencyid = (select sponsorid  from sponsorapps where appid = ''%s'');\n\n", appid);
+  fputs ("If  @agencyid is null\n", fp);
+  
+  fputs ("BEGIN\n", fp);
+  fputs ("THROW 51000, ''Configuration not ready'', 1;\n", fp);
+  fputs ("END\n\n", fp);
+   int h;
+  for (h = countflag; h <= i; h++)
+    {
+    // p=pow (2, n);
+      // printf ("INSERT INTO [dbo].[SponsorFlags] ([FlagId],[SponsorId],[FlagName]) VALUES (%d,@agencyid,''%s%d'')\n", p, lvname, n + 1);
+      fprintf (fp,
+	       "INSERT INTO [dbo].[SponsorFlags] ([FlagId],[SponsorId],[FlagName]) VALUES (''%s%d'',@agencyid,''%s%d'')\n", flagid, h, flagname, h);
+    }
+
+  fputs("\n END\n\n", fp);
+  fputs("-- ** SQL COMMAND END **\n\n';\n\nEXEC (@script);\n\nEND TRY\nBEGIN CATCH\n", fp);
+  fputs ("	--DEW 20181001 In case script error, print error and do not insert into script table\n", fp);
+  fputs ("SELECT 'SCRIPT DATA ERROR!! ERROR : ' + ERROR_MESSAGE() AS [Result]\n", fp);
+  fputs ("	RETURN;\n", fp);
+  fputs ("END CATCH;\n\n", fp);
+  fputs ("INSERT INTO [ScriptData] ([Number], [CreateBy], [CreateDate], [Comment], [RunDate], [Script], [WorkItemId]) VALUES (@number, @createby, @createdate, @comment, dbo.ToLocalTime(GETDATE()), @script, @workitemid);\n", fp);
+  fputs ("--DEW 20181001 In case script run successfully, print success message\n", fp);
+  fputs ("SELECT 'SCRIPT DATA COMPLETED SUCCESSFULLY' AS [Result]\n", fp);
+  fputs ("GO\n", fp);
+
+
+  fclose (fp);
+}
+
+
+
+  getch();
+  //return 0;
+}
+
+
+
